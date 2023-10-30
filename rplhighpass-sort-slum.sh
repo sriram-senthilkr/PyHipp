@@ -13,6 +13,12 @@
 #SBATCH -e rplhp-sort-slurm.%N.%j.err # STDERR
 
 # LOAD MODULES, INSERT CODE, AND RUN YOUR PROGRAMS HERE
+/data/miniconda3/bin/conda init
+source ~/.bashrc
+envarg=`/data/src/PyHipp/envlist.py`
+conda activate $envarg
+
+
 python -u -c "import PyHipp as pyh; \
 import time; \
 pyh.RPLHighPass(saveLevel=1); \
@@ -23,3 +29,7 @@ export_mountain_cells.export_mountain_cells(); \
 print(time.localtime());"
 
 aws sns publish --topic-arn arn:aws:sns:ap-southeast-1:475636311313:awsnotify --message "RPLHP-SORTJobDone"
+
+conda deactivate 
+/data/src/PyHipp/envlist.py $envarg
+
